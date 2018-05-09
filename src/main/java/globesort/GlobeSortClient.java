@@ -54,7 +54,7 @@ public class GlobeSortClient {
         IntArray request = IntArray.newBuilder().addAllValues(Arrays.asList(values)).build();
 	long appStartTime = System.nanoTime();
         IntArray response = serverStub.sortIntegers(request);
-	long appElapsedTime = System.nanoTime() - appStartTime;
+	long appElapsedTime = (System.nanoTime() - appStartTime) / 100000000;
         System.out.println("Sorted array");
 
 	long sortElapsedTime = (long) response.getProcessTime();
