@@ -59,7 +59,7 @@ public class GlobeSortClient {
 
 	double sortElapsedTime = ((double)(response.getProcessTime()) / 1000000000);
 
-	double networkElapsedTime = ((double)(appElapsedTime - sortElapsedTime)) / 1000000000;
+	double networkElapsedTime = ((double)(appElapsedTime - sortElapsedTime))/ 2 / 1000000000;
 	
 	resultList.add(pingElapsedTime);
 	resultList.add(networkElapsedTime);
