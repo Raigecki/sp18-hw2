@@ -40,24 +40,24 @@ public class GlobeSortClient {
         this.serverStr = ip + ":" + port;
     }
 
-    public List<Long> run(Integer[] values) throws Exception {
+    public List<Double> run(Integer[] values) throws Exception {
 
-	List<Long> resultList = new ArrayList();
+	List<Double> resultList = new ArrayList();
 
         System.out.println("Pinging " + serverStr + "...");
 	long pingStartTime = System.nanoTime();	
         serverStub.ping(Empty.newBuilder().build());
-	long pingElapsedTime = (System.nanoTime() - pingStartTime) / 1000000000;
+	double pingElapsedTime = ((double)(System.nanoTime() - pingStartTime)) / 1000000000;
         System.out.println("Ping successful.");
 
         System.out.println("Requesting server to sort array");
         IntArray request = IntArray.newBuilder().addAllValues(Arrays.asList(values)).build();
 	long appStartTime = System.nanoTime();
         IntArray response = serverStub.sortIntegers(request);
-	long appElapsedTime = (System.nanoTime() - appStartTime) / 1000000000;
+	double appElapsedTime = ((double)(System.nanoTime() - appStartTime)) / 1000000000;
         System.out.println("Sorted array");
 
-	long sortElapsedTime = (long) (response.getProcessTime() / 1000000000);
+	double sortElapsedTime = ((double)(response.getProcessTime()) / 1000000000);
 
 	resultList.add(pingElapsedTime);
 	resultList.add(appElapsedTime);
@@ -111,8 +111,8 @@ public class GlobeSortClient {
 
         GlobeSortClient client = new GlobeSortClient(cmd_args.getString("server_ip"), cmd_args.getInt("server_port"));
         try {
-            List<Long> resultList = client.run(values);
-	    System.out.println("Ping Time: " + resultList.get(0) + ", Sort Time: " + resultList.get(1) + ", Application Throughput: " + (double) arraySize/resultList.get(2));
+            List<Double> resultList = client.run(values);
+	    System.out.println("Ping Time: " + (double) resultList.get(0) + ", Application Throughput: " + (double) arraySize/resultList.get(1) + ", Network Throughput: " + (double) arraySize/resultList.get(2));
             
         } finally {
             client.shutdown();
