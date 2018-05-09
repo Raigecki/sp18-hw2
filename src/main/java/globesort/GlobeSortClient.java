@@ -54,13 +54,15 @@ public class GlobeSortClient {
         IntArray request = IntArray.newBuilder().addAllValues(Arrays.asList(values)).build();
 	long appStartTime = System.nanoTime();
         IntArray response = serverStub.sortIntegers(request);
-	double appElapsedTime = ((double)(System.nanoTime() - appStartTime)) / 1000000000;
+	double appElapsedTime = ((double)(System.nanoTime() - appStartTime));
         System.out.println("Sorted array");
 
-	double sortElapsedTime = ((double)(appElapsedTime - response.getProcessTime()) / 1000000000);
+	double sortElapsedTime = ((double)(response.getProcessTime()) / 1000000000);
 
+	double networkElapsedTime = ((double)(appElapsedTime - sortElapsedTime)) / 1000000000;
+	
 	resultList.add(pingElapsedTime);
-	resultList.add(appElapsedTime);
+	resultList.add(networkElapsedTime);
 	resultList.add(sortElapsedTime);
 	
 	return resultList;
@@ -112,7 +114,7 @@ public class GlobeSortClient {
         GlobeSortClient client = new GlobeSortClient(cmd_args.getString("server_ip"), cmd_args.getInt("server_port"));
         try {
             List<Double> resultList = client.run(values);
-	    System.out.println("Ping Time: " + (double) resultList.get(0) + ", Application Throughput: " + (double) arraySize/resultList.get(1) + ", Network Throughput: " + (double) arraySize/resultList.get(2));
+	    System.out.println("Ping Time: " + (double) resultList.get(0) + ", Network Throughput: " + (double) arraySize/resultList.get(1) + ", Sort Throughput: " + (double) arraySize/resultList.get(2));
             
         } finally {
             client.shutdown();
