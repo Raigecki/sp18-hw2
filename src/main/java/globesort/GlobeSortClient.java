@@ -112,7 +112,7 @@ public class GlobeSortClient {
         GlobeSortClient client = new GlobeSortClient(cmd_args.getString("server_ip"), cmd_args.getInt("server_port"));
         try {
             List<Long> resultList = client.run(values);
-	    System.out.println("Ping Time: " + resultList.get(0) + ", Sort Time: " + resultList.get(1) + ", Application Time: " + resultList.get(2));
+	    System.out.println("Ping Time: " + resultList.get(0) + ", Sort Time: " + resultList.get(1) + ", Application Throughput: " + (double) arraySize/resultList.get(2));
             
         } finally {
             client.shutdown();
