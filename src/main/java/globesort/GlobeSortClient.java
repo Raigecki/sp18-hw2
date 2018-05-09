@@ -47,17 +47,17 @@ public class GlobeSortClient {
         System.out.println("Pinging " + serverStr + "...");
 	long pingStartTime = System.nanoTime();	
         serverStub.ping(Empty.newBuilder().build());
-	long pingElapsedTime = System.nanoTime();
+	long pingElapsedTime = (System.nanoTime() - pingStartTime) / 1000000000;
         System.out.println("Ping successful.");
 
         System.out.println("Requesting server to sort array");
         IntArray request = IntArray.newBuilder().addAllValues(Arrays.asList(values)).build();
 	long appStartTime = System.nanoTime();
         IntArray response = serverStub.sortIntegers(request);
-	long appElapsedTime = (System.nanoTime() - appStartTime) / 100000000;
+	long appElapsedTime = (System.nanoTime() - appStartTime) / 1000000000;
         System.out.println("Sorted array");
 
-	long sortElapsedTime = (long) response.getProcessTime();
+	long sortElapsedTime = (long) (response.getProcessTime() / 1000000000);
 
 	resultList.add(pingElapsedTime);
 	resultList.add(appElapsedTime);
