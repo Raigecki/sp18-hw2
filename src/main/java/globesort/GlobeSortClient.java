@@ -57,7 +57,7 @@ public class GlobeSortClient {
 	double appElapsedTime = ((double)(System.nanoTime() - appStartTime)) / 1000000000;
         System.out.println("Sorted array");
 
-	double sortElapsedTime = ((double)(response.getProcessTime()) / 1000000000);
+	double sortElapsedTime = ((double)(appElapsedTime - response.getProcessTime()) / 1000000000);
 
 	resultList.add(pingElapsedTime);
 	resultList.add(appElapsedTime);
