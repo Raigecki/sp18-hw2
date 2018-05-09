@@ -8,6 +8,8 @@ import io.grpc.stub.StreamObserver;
 import net.sourceforge.argparse4j.*;
 import net.sourceforge.argparse4j.inf.*;
 import java.io.IOException;
+import java.io.FileWriter;
+import java.io.OutputStreamWriter;
 import java.nio.file.FileSystems;
 import java.lang.RuntimeException;
 import java.lang.Exception;
@@ -38,16 +40,32 @@ public class GlobeSortClient {
         this.serverStr = ip + ":" + port;
     }
 
-    public void run(Integer[] values) throws Exception {
+    public List<Long> run(Integer[] values) throws Exception {
+
+	List<Long> resultList = new ArrayList();
+
         System.out.println("Pinging " + serverStr + "...");
+	long pingStartTime = System.nanoTime();	
         serverStub.ping(Empty.newBuilder().build());
+	long pingElapsedTime = System.nanoTime();
         System.out.println("Ping successful.");
 
         System.out.println("Requesting server to sort array");
         IntArray request = IntArray.newBuilder().addAllValues(Arrays.asList(values)).build();
+	long appStartTime = System.nanoTime();
         IntArray response = serverStub.sortIntegers(request);
+	long appElapsedTime = System.nanoTime() - appStartTime;
         System.out.println("Sorted array");
+
+	long sortElapsedTime = (long) response.getProcessTime();
+
+	resultList.add(pingElapsedTime);
+	resultList.add(appElapsedTime);
+	resultList.add(sortElapsedTime);
+	
+	return resultList;
     }
+
 
     public void shutdown() throws InterruptedException {
         serverChannel.shutdown().awaitTermination(2, TimeUnit.SECONDS);
@@ -87,12 +105,15 @@ public class GlobeSortClient {
         if (cmd_args == null) {
             throw new RuntimeException("Argument parsing failed");
         }
-
+	
+	int arraySize = cmd_args.getInt("num_values");
         Integer[] values = genValues(cmd_args.getInt("num_values"));
 
         GlobeSortClient client = new GlobeSortClient(cmd_args.getString("server_ip"), cmd_args.getInt("server_port"));
         try {
-            client.run(values);
+            List<Long> resultList = client.run(values);
+	    System.out.println("Ping Time: " + resultList.get(0) + ", Sort Time: " + resultList.get(1) + ", Application Time: " + resultList.get(2));
+            
         } finally {
             client.shutdown();
         }

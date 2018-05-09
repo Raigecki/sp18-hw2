@@ -13,4 +13,6 @@ message Empty { }
 
 message IntArray {
   repeated int32 values = 1;
+  double processTime = 2;
 }
+
